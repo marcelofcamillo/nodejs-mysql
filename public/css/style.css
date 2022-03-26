@@ -38,6 +38,10 @@ h1 {
   font-weight: bold;
 }
 
+.actions {
+  margin-top: 1em;
+}
+
 #book-page {
   padding: 2em;
 }
