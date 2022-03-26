@@ -85,6 +85,23 @@ app.get('/books/edit/:id', (req, res) => {
   });
 });
 
+app.post('/books/updateBook', (req, res) => {
+  const id = req.body.id;
+  const title = req.body.title;
+  const pageqty = req.body.pageqty;
+
+  const sql = `UPDATE books SET title = '${title}', pageqty = '${pageqty}' WHERE id = ${id}`;
+
+  conn.query(sql, (err) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    res.redirect('/books');
+  });
+});
+
 const conn = mysql.createConnection({
   host: process.env.HOST,
   user: process.env.USER,
