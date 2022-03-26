@@ -25,9 +25,27 @@ app.post('/books/insertBook', (req, res) => {
   const sql = `INSERT INTO books (title, pageqty) VALUES ('${title}', '${pageqty}')`;
 
   conn.query(sql, (err) => {
-    if (err) console.log(err);
+    if (err) {
+      console.log(err);
+      return;
+    }
 
-    res.redirect('/');
+    res.redirect('/books');
+  });
+});
+
+app.get('/books', (req, res) => {
+  const sql = 'SELECT * FROM books';
+
+  conn.query(sql, (err, data) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    const books = data;
+
+    res.render('books', { books });
   });
 });
 
