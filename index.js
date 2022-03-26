@@ -1,9 +1,6 @@
 import express from 'express';
 import exphbs from 'express-handlebars';
-import mysql from 'mysql';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import pool from './db/conn.js';
 
 const app = express();
 
@@ -24,7 +21,7 @@ app.post('/books/insertBook', (req, res) => {
 
   const sql = `INSERT INTO books (title, pageqty) VALUES ('${title}', '${pageqty}')`;
 
-  conn.query(sql, (err) => {
+  pool.query(sql, (err) => {
     if (err) {
       console.log(err);
       return;
@@ -37,7 +34,7 @@ app.post('/books/insertBook', (req, res) => {
 app.get('/books', (req, res) => {
   const sql = 'SELECT * FROM books';
 
-  conn.query(sql, (err, data) => {
+  pool.query(sql, (err, data) => {
     if (err) {
       console.log(err);
       return;
@@ -54,7 +51,7 @@ app.get('/books/:id', (req, res) => {
 
   const sql = `SELECT * FROM books WHERE id = ${id}`;
 
-  conn.query(sql, (err, data) => {
+  pool.query(sql, (err, data) => {
     if (err) {
       console.log(err);
       return;
@@ -71,15 +68,13 @@ app.get('/books/edit/:id', (req, res) => {
 
   const sql = `SELECT * FROM books WHERE id = ${id}`;
 
-  conn.query(sql, (err, data) => {
+  pool.query(sql, (err, data) => {
     if (err) {
       console.log(err);
       return;
     }
 
     const book = data[0];
-
-    console.log(book);
 
     res.render('editbook', { book });
   });
@@ -92,7 +87,7 @@ app.post('/books/updateBook', (req, res) => {
 
   const sql = `UPDATE books SET title = '${title}', pageqty = '${pageqty}' WHERE id = ${id}`;
 
-  conn.query(sql, (err) => {
+  pool.query(sql, (err) => {
     if (err) {
       console.log(err);
       return;
@@ -107,7 +102,7 @@ app.post('/books/remove/:id', (req, res) => {
 
   const sql = `DELETE FROM books WHERE id = ${id}`;
 
-  conn.query(sql, (err) => {
+  pool.query(sql, (err) => {
     if (err) {
       console.log(err);
       return;
@@ -117,16 +112,6 @@ app.post('/books/remove/:id', (req, res) => {
   });
 });
 
-const conn = mysql.createConnection({
-  host: process.env.HOST,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
-});
-
-conn.connect((err) => {
-  if (err) console.log(err);
-
-  console.log('Conectado ao MySQL!');
-  app.listen(3000);
+app.listen(3000, () => {
+  console.log('API started!');
 });
